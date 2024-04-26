@@ -32,9 +32,12 @@ class MoviesController < ApplicationController
         @movie = Movie.find params[:id]
         permitted = params[:movie].permit(:title,:rating,:release_date)
         @movie.update!(permitted)
-         
-        flash[:notice] = "#{@movie.title} was successfully updated."
-        redirect_to movie_path(@movie)
+        respond_to do |client_wants|
+            client_wants.html {  
+                flash[:notice] = "#{@movie.title} was successfully updated."
+                redirect_to movie_path(@movie)  } # as before
+            client_wants.xml  {  render :xml => @movie.to_xml    }
+          end
       end
 
       def destroy
